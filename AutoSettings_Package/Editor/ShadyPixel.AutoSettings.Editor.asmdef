@@ -1,0 +1,18 @@
+{
+    "name": "ShadyPixel.AutoSettings.Editor",
+    "rootNamespace": "ShadyPixel.AutoSettings",
+    "references": [
+        "GUID:bb9d29cb611155f4da80c38007b04a56"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

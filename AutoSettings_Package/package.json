@@ -1,0 +1,22 @@
+{
+  "name": "no.shadypixel.autosettings",
+  "version": "0.1.0",
+  "displayName": "AutoSettings",
+  "description": "AutoSettings makes it easier to create custom editor or runtime settings",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "Utilities"
+  ],
+  "unity": "2021.1",
+  "author": {
+    "name": "Thomas Sørensen",
+    "email": "thomas.sorensen.w@gmail.com",
+    "url": ""
+  },
+  "type": "library",
+  "hideInEditor": false,
+  "repository": {
+    "url": "https://github.com/???.git",
+    "type": "git"
+  }
+}
