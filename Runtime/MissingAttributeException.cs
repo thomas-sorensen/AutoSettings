@@ -6,7 +6,7 @@ namespace ShadyPixel.AutoSettings
     /// <summary>
     /// Exception for missing attributes on a class, method, or property.
     /// </summary>
-    internal class MissingAttributeException : Exception
+    public class MissingAttributeException : Exception
     {
         /// <summary>
         /// Initializes with the type of the missing attribute.
