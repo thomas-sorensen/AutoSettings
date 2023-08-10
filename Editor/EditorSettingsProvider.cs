@@ -1,21 +1,22 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UObject = UnityEngine.Object;
-using UEditor = UnityEditor.Editor;
 
 namespace ShadyPixel.AutoSettings.Editor
 {
     /// <summary>
-    ///     Based on UnityEditor.AssetSettingsProvider
+    ///     Provides a custom settings provider for the Unity editor, enabling the management and editing of specific setting types.
+    ///     This class leverages UnityEditor.Editor.CreateEditor to support custom editors, allowing users to tailor the behavior of the settings panel.
+    ///     Inspired by UnityEditor.AssetSettingsProvider.
     /// </summary>
+    /// <typeparam name="TSetting">The specific type of setting that this provider handles. Must be a subclass of AutoSetting<TSetting>.</typeparam>
     public class EditorSettingsProvider<TSetting> : SettingsProvider
         where TSetting : AutoSetting<TSetting>
     {
         private const string EditorUserPathPrefix = "Preferences/";
         private const string EditorProjectPathPrefix = "Project/";
 
-        private UEditor _editor;
+        private UnityEditor.Editor _editor;
         private bool _generatedKeywords;
         private TSetting _setting;
 
@@ -24,6 +25,9 @@ namespace ShadyPixel.AutoSettings.Editor
         {
         }
 
+        /// <summary>
+        ///     Retrieves the setting or logs an error if it fails.
+        /// </summary>
         private static TSetting GetSetting()
         {
             var setting = AutoSetting<TSetting>.Get();
@@ -33,6 +37,10 @@ namespace ShadyPixel.AutoSettings.Editor
             return null;
         }
 
+
+        /// <summary>
+        ///     Factory method to create an EditorSettingsProvider.
+        /// </summary>
         public static EditorSettingsProvider<TSetting> Create()
         {
             var targetSetting = GetSetting();
@@ -54,21 +62,26 @@ namespace ShadyPixel.AutoSettings.Editor
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
-            if (!_setting || !_editor)
-            {
-                RecreateEditor();
-            }
-
+            RecreateEditorIfNeeded();
             base.OnActivate(searchContext, rootElement);
         }
 
-        private void RecreateEditor()
+
+        /// <summary>
+        ///     Recreates the editor if it's not found.
+        /// </summary>
+        private void RecreateEditorIfNeeded()
         {
+            if (_setting && _editor) return;
+
             LoadSetting();
             ReleaseEditor();
             CreateEditor();
         }
 
+        /// <summary>
+        ///     Loads the setting or logs an error if it fails.
+        /// </summary>
         private void LoadSetting()
         {
             _setting = GetSetting();
@@ -77,19 +90,25 @@ namespace ShadyPixel.AutoSettings.Editor
             Debug.LogError($"{GetType()}: Failed to retrieve setting of type {typeof(TSetting)}");
         }
 
+        /// <summary>
+        ///     Creates an editor instance or logs an error if it fails.
+        /// </summary>
         private void CreateEditor()
         {
-            _editor = UEditor.CreateEditor(_setting);
+            _editor = UnityEditor.Editor.CreateEditor(_setting);
             if (_editor) return;
 
             Debug.LogError($"{GetType()}: Failed to create editor!");
         }
 
+        /// <summary>
+        ///     Releases the editor instance if it exists.
+        /// </summary>
         private void ReleaseEditor()
         {
             if (!_editor) return;
 
-            UObject.DestroyImmediate(_editor);
+            Object.DestroyImmediate(_editor);
             _editor = null;
         }
 
@@ -97,12 +116,13 @@ namespace ShadyPixel.AutoSettings.Editor
         {
             if (_editor)
             {
+                //TODO: Might want to move this into ReleaseEditor (need to check it).
                 if (_editor.serializedObject.targetObject != null)
                 {
                     _editor.serializedObject.ApplyModifiedProperties();
                 }
 
-                UObject.DestroyImmediate(_editor);
+                Object.DestroyImmediate(_editor);
                 _editor = null;
             }
 
@@ -116,10 +136,7 @@ namespace ShadyPixel.AutoSettings.Editor
 
         public override void OnGUI(string searchContext)
         {
-            if (!_setting || !_editor)
-            {
-                RecreateEditor();
-            }
+            RecreateEditorIfNeeded();
 
             if (!_editor)
             {
@@ -129,11 +146,10 @@ namespace ShadyPixel.AutoSettings.Editor
             }
 
             EditorGUI.BeginChangeCheck();
+
+            using (new SettingsGuiScope())
             {
-                using (new SettingsGuiScope())
-                {
-                    _editor.OnInspectorGUI();
-                }
+                _editor.OnInspectorGUI();
             }
 
             if (EditorGUI.EndChangeCheck() && _setting)
