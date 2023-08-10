@@ -1,8 +1,11 @@
 {
   "name": "no.shadypixel.autosettings",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "displayName": "AutoSettings",
   "description": "AutoSettings makes it easier to create custom editor and runtime settings",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.2"
+  },
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
   "keywords": [
     "Utilities"
