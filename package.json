@@ -1,6 +1,6 @@
 {
   "name": "no.shadypixel.autosettings",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "displayName": "AutoSettings",
   "description": "AutoSettings makes it easier to create custom editor and runtime settings",
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
@@ -16,7 +16,7 @@
   "type": "library",
   "hideInEditor": false,
   "repository": {
-    "url": "https://github.com/???.git",
+    "url": "https://github.com/thomas-sorensen/AutoSettings.git",
     "type": "git"
   }
 }
