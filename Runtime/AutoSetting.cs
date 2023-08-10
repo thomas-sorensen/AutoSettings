@@ -5,22 +5,18 @@ using UnityEngine;
 
 namespace ShadyPixel.AutoSettings
 {
+    /// <summary>
+    /// Represents an automatically managed setting within the application.
+    /// </summary>
     [JsonObject(MemberSerialization.Fields)]
     public class AutoSetting<TSetting> : ScriptableObject where TSetting : AutoSetting<TSetting>
     {
+        #region Singleton Pattern
+
         // Lazy<TSetting> fails when we exit PlayMode
         //private static readonly Lazy<TSetting> _lazyInstance = new(CreateInstance);
         //private static TSetting Instance => _lazyInstance.Value;
-
-        public static event Action<TSetting> Changed;
-
         private static TSetting _instance;
-
-        [JsonIgnore] private ISettingStorage _storage;
-        [JsonIgnore] public string Key => CreateKey(Scope, SettingName);
-        [JsonIgnore] public string SettingName { get; private set; }
-        [JsonIgnore] public string Scope { get; private set; }
-        [JsonIgnore] public SettingUsage SettingUsage { get; private set; }
 
         private static TSetting Instance
         {
@@ -32,11 +28,29 @@ namespace ShadyPixel.AutoSettings
             }
         }
 
+        #endregion
+
+        public static event Action<TSetting> Changed;
+
+        [JsonIgnore] private ISettingStorage _storage;
+        [JsonIgnore] public string Key => CreateKey(Scope, SettingName);
+        [JsonIgnore] public string SettingName { get; private set; }
+        [JsonIgnore] public string Scope { get; private set; }
+        [JsonIgnore] public SettingUsage SettingUsage { get; private set; }
+
+        /// <summary>
+        /// Generates a unique key based on the provided scope and setting name.
+        /// </summary>
         public static string CreateKey(string scope, string settingName)
         {
             return string.IsNullOrWhiteSpace(scope) ? settingName : $"{scope}.{settingName}";
         }
 
+        /// <summary>
+        /// Creates and initializes a new instance of the setting, loading its values from storage.
+        /// </summary>
+        /// <returns>A new instance of the setting.</returns>
+        /// <exception cref="MissingAttributeException">Thrown when the required AutoSettingAttribute is missing on the TSetting type.</exception>
         private static TSetting CreateInstance()
         {
             var type = typeof(TSetting);
@@ -57,11 +71,17 @@ namespace ShadyPixel.AutoSettings
             return setting;
         }
 
+        /// <summary>
+        /// Retrieves the setting instance, creating it if necessary.
+        /// </summary>
         public static TSetting Get()
         {
             return Instance;
         }
 
+        /// <summary>
+        /// Saves the current setting, invoking the Changed event if successful.
+        /// </summary>
         public void Save()
         {
             // "this" doesn't have the inherited type, so we're preventing a cast by using instance
