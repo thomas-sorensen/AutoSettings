@@ -26,7 +26,6 @@ To install the Auto Settings package in Unity, follow these steps:
 ## Example
 
 Here's an example that demonstrates how to expose project-wide editor settings using the `AutoSetting` class and attribute.
-This setting will 
 
 ```csharp
 [AutoSetting(SettingUsage.EditorProject, "SettingName")]
