@@ -29,7 +29,8 @@ public class ExampleSetting : AutoSetting<ExampleSetting>
 	{
 		return EditorSettingsProvider<ExampleSetting>.Create();
 	}
-}```
+}
+```
 
 ## Notes
 - Setting storage strategy and folders are currently hard-coded, this will be addressed in a future update.
